@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravitational Waves Animation</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+    <!-- Include Three.js for 3D animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <canvas id="animationCanvas"></canvas>
+    <script>
+        // Initialize the scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('animationCanvas') });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        // Create a grid to represent spacetime
+        const gridHelper = new THREE.GridHelper(200, 50, 0x888888, 0x444444);
+        scene.add(gridHelper);
+
+        // Position the camera
+        camera.position.z = 50;
+
+        // Create black holes
+        const blackHole1 = new THREE.Mesh(
+            new THREE.SphereGeometry(1, 32, 32),
+            new THREE.MeshBasicMaterial({ color: 0x000000 })
+        );
+        const blackHole2 = new THREE.Mesh(
+            new THREE.SphereGeometry(1, 32, 32),
+            new THREE.MeshBasicMaterial({ color: 0x000000 })
+        );
+        scene.add(blackHole1);
+        scene.add(blackHole2);
+
+        // Initial positions
+        blackHole1.position.set(-10, 0, 0);
+        blackHole2.position.set(10, 0, 0);
+
+        // Function to update positions and simulate gravitational waves
+        function updatePositions(time) {
+            const t = time * 0.001; // Convert time to seconds
+
+            // Simple circular motion for demonstration
+            blackHole1.position.x = -10 * Math.cos(t);
+            blackHole1.position.y = 10 * Math.sin(t);
+            blackHole2.position.x = 10 * Math.cos(t);
+            blackHole2.position.y = -10 * Math.sin(t);
+
+            // Simulate gravitational waves by scaling the grid
+            const scale = 1 + 0.1 * Math.sin(t * 10);
+            gridHelper.scale.set(scale, scale, scale);
+        }
+
+        // Update the render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = performance.now();
+            updatePositions(time);
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html> 
